@@ -2,6 +2,8 @@
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Solar Internship Registration – BRO SIS Solar Energy Engineering</title>
+<link rel="icon" type="image/jpg" href="logo.jpg">
+<link rel="apple-touch-icon" href="logo.jpg">
 <style>
 :root{color-scheme:light;--bg:#f7f3e8;--card:#fff;--ink:#1f2937;--mute:#6b7280;--acc:#f59e0b;--acc2:#b45309;--line:#e5e7eb;--ok:#15803d;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 *{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
@@ -21,13 +23,19 @@ input,select,textarea{width:100%;padding:11px;border:1px solid var(--line);borde
 .pay label{margin:0;font-weight:500;border:1px solid var(--line);border-radius:10px;padding:10px 14px;display:flex;gap:8px;align-items:center;cursor:pointer}
 .pay input{width:auto}
 button{background:var(--acc);color:#1f1300;border:0;border-radius:10px;padding:13px 18px;font:inherit;font-weight:700;width:100%;margin-top:16px;cursor:pointer}
+button:disabled{opacity:.6;cursor:not-allowed}
 button.sec{background:transparent;color:var(--acc2);border:1px solid var(--acc);width:auto;margin:0}
-.msg{margin-top:12px;padding:12px;border-radius:10px;background:rgba(21,128,61,.12);color:var(--ok);display:none}
 .mute{color:var(--mute);font-size:14px}
 ul{margin:0;padding-left:20px}
 .tw{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:13px}
 td,th{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;white-space:nowrap}
+.done{text-align:center;border:2px solid var(--ok);background:#f0fdf4}
+.done .tick{width:72px;height:72px;margin:0 auto 8px;border-radius:50%;background:var(--ok);color:#fff;font-size:40px;line-height:72px;font-weight:700}
+.done h2{color:var(--ok);font-size:22px;margin-bottom:8px}
+.done a{display:inline-block;margin-top:8px;font-weight:700;color:var(--acc2)}
 </style></head><body><div class="w">
+
+<!-- Hidden form so Netlify can detect the form. Do not remove. -->
 <form name="solar-internship" data-netlify="true" hidden><input name="name"><input name="phone"><input name="email"><input name="college"><input name="dept"><input name="year"><input name="city"><input name="start"><input name="interest"></form>
 
 <div class="hero">
@@ -57,8 +65,16 @@ td,th{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;white-
 <label><input type="radio" name="pm" value="Not interested"> Not interested</label>
 </div>
 <button id="go">Submit registration</button>
-<div class="msg" id="ok"></div>
 <p class="mute" id="err" style="color:#dc2626"></p>
+</div>
+
+<!-- Success card: shown after the registration is saved -->
+<div class="card done" id="doneCard" style="display:none" role="status" aria-live="polite">
+  <div class="tick">✓</div>
+  <h2>Registration completed successfully!</h2>
+  <p id="doneMsg" style="margin:0 0 6px"></p>
+  <p class="mute" style="margin:0">Our team will contact you soon. You can close this page.</p>
+  <a id="waLink" target="_blank" rel="noopener">Send details on WhatsApp (optional) →</a>
 </div>
 
 <div class="card"><h2>Contact</h2>
@@ -74,18 +90,33 @@ $('go').onclick=async()=>{
   const r={name:$('name').value.trim(),phone:$('phone').value.trim(),email:$('email').value.trim(),college:$('college').value.trim(),dept:$('dept').value,year:$('year').value,city:$('city').value.trim(),start:$('start').value,interest:pm?pm.value:''};
   if(!r.name||!r.phone||!r.email||!r.college||!r.dept||!r.year||!r.interest){$('err').textContent='Please fill all fields marked *.';return}
   if(!/^[0-9+\s-]{10,15}$/.test(r.phone)){$('err').textContent='Enter a valid phone number.';return}
-  // 1) Save to Netlify Forms (works on Netlify; silently skipped elsewhere)
+
+  // Stop double submissions
+  const btn=$('go');btn.disabled=true;btn.textContent='Submitting...';
+
+  // Save to Netlify Forms (works only on the deployed Netlify site)
   let saved=false;
   try{
     const res=await fetch('/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},
       body:new URLSearchParams({'form-name':'solar-internship',...r}).toString()});
     saved=res.ok;
   }catch(e){}
-  // 2) WhatsApp message (always available)
+
+  // WhatsApp message link (optional extra)
   const txt=encodeURIComponent("Solar Internship Registration\nName: "+r.name+"\nPhone: "+r.phone+"\nEmail: "+r.email+"\nCollege: "+r.college+"\nDept: "+r.dept+"\nYear: "+r.year+"\nInterest: "+r.interest);
-  const m=$('ok');m.style.display='block';
-  m.textContent=saved?"✅ Registered, "+r.name+"! We will contact you on "+r.phone+".":"Almost done! Send your details on WhatsApp to confirm.";
-  const a=document.createElement('a');a.href="https://wa.me/"+WA+"?text="+txt;a.target="_blank";a.rel="noopener";
-  a.textContent=" Send on WhatsApp →";a.style.cssText="display:block;margin-top:8px;font-weight:700;color:inherit";m.appendChild(a);
+  const waUrl="https://wa.me/"+WA+"?text="+txt;
+
+  if(saved){
+    // Hide the form and show the success card
+    $('formCard').style.display='none';
+    $('doneMsg').textContent="Thank you, "+r.name+"! We will contact you on "+r.phone+".";
+    $('waLink').href=waUrl;
+    $('doneCard').style.display='block';
+    $('doneCard').scrollIntoView({behavior:'smooth',block:'center'});
+  }else{
+    // Keep the form open and show an error
+    btn.disabled=false;btn.textContent='Submit registration';
+    $('err').innerHTML='Could not submit right now. Please try again, or <a href="'+waUrl+'" target="_blank" rel="noopener">send your details on WhatsApp</a>.';
+  }
 };
 </script></body></html>
