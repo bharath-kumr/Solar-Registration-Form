@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Solar Internship Registration – BRO SIS Solar Energy Engineering</title>
+<style>
+:root{color-scheme:light;--bg:#f7f3e8;--card:#fff;--ink:#1f2937;--mute:#6b7280;--acc:#f59e0b;--acc2:#b45309;--line:#e5e7eb;--ok:#15803d;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+.w{max-width:640px;margin:0 auto;padding:16px}
+.hero{position:relative;background:#02275b;color:#fff;border-bottom:3px solid var(--acc);border-radius:12px;padding:68px 12px 12px;text-align:center}.logo{position:absolute;top:8px;left:8px;width:64px;height:auto;border-radius:6px}.chips{justify-content:center}@media(min-width:560px){.hero{padding:12px 84px}}
+.hero h1{margin:0 0 2px;font-size:20px}.hero p{margin:0;opacity:.9;font-size:13px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chip{background:rgba(255,255,255,.14);color:#fff;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:600}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-top:14px}
+h2{margin:0 0 12px;font-size:18px}
+label{display:block;font-weight:600;font-size:14px;margin:12px 0 4px}
+input,select,textarea{width:100%;padding:11px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:inherit}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:480px){.row{grid-template-columns:1fr}}
+.pay{display:flex;flex-wrap:wrap;gap:8px}
+.pay label{margin:0;font-weight:500;border:1px solid var(--line);border-radius:10px;padding:10px 14px;display:flex;gap:8px;align-items:center;cursor:pointer}
+.pay input{width:auto}
+button{background:var(--acc);color:#1f1300;border:0;border-radius:10px;padding:13px 18px;font:inherit;font-weight:700;width:100%;margin-top:16px;cursor:pointer}
+button.sec{background:transparent;color:var(--acc2);border:1px solid var(--acc);width:auto;margin:0}
+.msg{margin-top:12px;padding:12px;border-radius:10px;background:rgba(21,128,61,.12);color:var(--ok);display:none}
+.mute{color:var(--mute);font-size:14px}
+ul{margin:0;padding-left:20px}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:13px}
+td,th{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;white-space:nowrap}
+</style></head><body><div class="w">
+<form name="solar-internship" data-netlify="true" hidden><input name="name"><input name="phone"><input name="email"><input name="college"><input name="dept"><input name="year"><input name="city"><input name="start"><input name="interest"></form>
+
+<div class="hero">
+<img class="logo" alt="Brosis – The Engineer’s World" src="logo.jpg">
+<h1>☀️ Solar Internship &amp; Practical Training</h1>
+<p>BRO SIS Solar Energy Engineering — “the engineer’s world”</p>
+<div class="chips"><span class="chip">15 days</span><span class="chip">₹2,999</span><span class="chip">Batch: 15 seats</span><span class="chip">Madurai</span></div>
+</div>
+
+<div class="card"><h2>What you get</h2>
+<ul><li>Hands-on rooftop solar installation practice</li><li>System design, wiring and inverter basics</li><li>PM Surya Ghar subsidy process overview</li><li>Participation certificate</li></ul>
+<p class="mute">For final-year EEE / ECE / Mechanical students.</p></div>
+
+<div class="card" id="formCard"><h2>Register now</h2>
+<div id="seats" class="mute"></div>
+<label>Full name *</label><input id="name" autocomplete="name">
+<div class="row"><div><label>Phone / WhatsApp *</label><input id="phone" type="tel" autocomplete="tel"></div>
+<div><label>Email *</label><input id="email" type="email" autocomplete="email"></div></div>
+<label>College / University *</label><input id="college">
+<div class="row"><div><label>Department *</label><select id="dept"><option value="">Select</option><option>EEE</option><option>ECE</option><option>Mechanical</option><option>Other</option></select></div>
+<div><label>Year *</label><select id="year"><option value="">Select</option><option>Final year</option><option>Third year</option><option>Passed out</option></select></div></div>
+<label>City</label><input id="city" value="">
+<label>Preferred start date</label><input id="start" type="date">
+<label>Are you interested? *</label>
+<div class="pay">
+<label><input type="radio" name="pm" value="Interested"> Interested</label>
+<label><input type="radio" name="pm" value="Not interested"> Not interested</label>
+</div>
+<button id="go">Submit registration</button>
+<div class="msg" id="ok"></div>
+<p class="mute" id="err" style="color:#dc2626"></p>
+</div>
+
+<div class="card"><h2>Contact</h2>
+<p style="margin:0">📞 +91 81110 20499<br>✉️ contact.brosisenergy@gmail.com<br>📍 324 / 6, V.O.C Nagar, Yadava Gents College opposite, Tiruppalai, Madurai 625014</p></div>
+
+</div>
+<script>
+const WA="918111020499";
+const $=id=>document.getElementById(id);
+$('go').onclick=async()=>{
+  $('err').textContent='';
+  const pm=document.querySelector('input[name=pm]:checked');
+  const r={name:$('name').value.trim(),phone:$('phone').value.trim(),email:$('email').value.trim(),college:$('college').value.trim(),dept:$('dept').value,year:$('year').value,city:$('city').value.trim(),start:$('start').value,interest:pm?pm.value:''};
+  if(!r.name||!r.phone||!r.email||!r.college||!r.dept||!r.year||!r.interest){$('err').textContent='Please fill all fields marked *.';return}
+  if(!/^[0-9+\s-]{10,15}$/.test(r.phone)){$('err').textContent='Enter a valid phone number.';return}
+  // 1) Save to Netlify Forms (works on Netlify; silently skipped elsewhere)
+  let saved=false;
+  try{
+    const res=await fetch('/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},
+      body:new URLSearchParams({'form-name':'solar-internship',...r}).toString()});
+    saved=res.ok;
+  }catch(e){}
+  // 2) WhatsApp message (always available)
+  const txt=encodeURIComponent("Solar Internship Registration\nName: "+r.name+"\nPhone: "+r.phone+"\nEmail: "+r.email+"\nCollege: "+r.college+"\nDept: "+r.dept+"\nYear: "+r.year+"\nInterest: "+r.interest);
+  const m=$('ok');m.style.display='block';
+  m.textContent=saved?"✅ Registered, "+r.name+"! We will contact you on "+r.phone+".":"Almost done! Send your details on WhatsApp to confirm.";
+  const a=document.createElement('a');a.href="https://wa.me/"+WA+"?text="+txt;a.target="_blank";a.rel="noopener";
+  a.textContent=" Send on WhatsApp →";a.style.cssText="display:block;margin-top:8px;font-weight:700;color:inherit";m.appendChild(a);
+};
+</script></body></html>
